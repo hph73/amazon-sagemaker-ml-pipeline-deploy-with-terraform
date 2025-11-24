@@ -17,6 +17,10 @@ locals {
 
 #################################################
 # IAM Roles and Policies for Step Functions
+# Policies attached to step function:
+# 1. lambda_invoke
+# 2. sagemaker_policy (training job, model, endpoints)
+# 3. cloudwatch full access
 #################################################
 
 // IAM role for Step Functions state machine
@@ -139,6 +143,9 @@ resource "aws_iam_role_policy_attachment" "cloud_watch_full_access" {
 
 #################################################
 # IAM Roles and Policies for SageMaker
+# Polices attached to Sagemaker
+# 1. SageMaker full access
+# 2. S3 access
 #################################################
 
 // IAM role for SageMaker training job
@@ -212,11 +219,6 @@ resource "aws_s3_bucket" "bucket_training_data" {
   bucket = var.s3_bucket_input_training_path
 }
 
-resource "aws_s3_bucket_acl" "bucket_training_data_acl" {
-  bucket = aws_s3_bucket.bucket_training_data.id
-  acl    = "private"
-}
-
 resource "aws_s3_object" "object" {
   bucket = aws_s3_bucket.bucket_training_data.id
   key    = "iris.csv"
@@ -225,11 +227,6 @@ resource "aws_s3_object" "object" {
 
 resource "aws_s3_bucket" "bucket_output_models" {
   bucket = var.s3_bucket_output_models_path
-}
-
-resource "aws_s3_bucket_acl" "bucket_output_models_acl" {
-  bucket = aws_s3_bucket.bucket_output_models.id
-  acl    = "private"
 }
 
 #################################################
